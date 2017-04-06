@@ -28,6 +28,14 @@ init() {
     else
         withFail Please install minisat or picosat
     fi
+    # File as first argument?
+    if ! [ -z "${1+x}" ]; then
+        FILE=$1
+    fi
+    if ! [ -f "$FILE" ]; then
+        withFail "File $FILE does not exist!"
+        exit 1
+    fi
 }
 
 fixFile() {
@@ -80,12 +88,7 @@ notSolidTest() {
     doTest <(echo -e "$1 0\n-$2 0") $1 $2 SATISFIABLE "not solid"
 }
 
-if ! [ -f "$FILE" ]; then
-    withFail "ERROR: $FILE does not exist! Exiting..."
-    exit 1
-fi
-
-init
+init $@
 cleanup
 
 solidTest 1 4
