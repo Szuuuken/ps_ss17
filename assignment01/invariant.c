@@ -35,6 +35,10 @@ int main(int argc, char **argv){
 		case 4 :
 		       invCode(r,i,n,invAssert04);
 		       break;
+		case 5 :
+		       invCode(-1,-2,4,invAssert04);
+		       break;
+
 	}
 }
 

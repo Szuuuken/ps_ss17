@@ -16,7 +16,7 @@ int maxsum (int max, int val);
 /* === Implementations === */
 
 int main(int argc, char** argv){
-	/*int result0 = maxsum(0,0);
+	int result0 = maxsum(0,0);
 	(void) printf("maxsum(0,0) returns %i expected was 0\n", result0 );
 	assert( result0 == 0);
 	DEBUG("\n");
@@ -33,8 +33,9 @@ int main(int argc, char** argv){
 
 	int result3 = maxsum(20,10);
 	(void) printf("maxsum(20,10) returns %i expected was 20\n", result3 );
-	assert( result3 == 20);*/
-	assert(maxsum (0,0) == 0);
+	assert( result3 == 20);
+	assert(maxsum (-1,1) == -1);
+	
 }
 
 int maxsum (int max, int val) {
@@ -46,13 +47,18 @@ int maxsum (int max, int val) {
 		val = -val;
 
 	while ((i < val) && (result <= max)) {
+		DEBUG("while\n");
 		i = i + 1;
 		result = result + i;
 		DEBUG("i=%i result=%i\n",i,result);
 	}
 
-	if (result <= max)
+	if (result <= max){
+		DEBUG("if\n");
 		return result;
-	else
+	}
+	else{
+		DEBUG("else\n");
 		return max;
+	}
 }
