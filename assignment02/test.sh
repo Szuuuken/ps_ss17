@@ -21,9 +21,9 @@ init() {
     tmp="$(mktemp)"
     tmp2="$(mktemp)"
     failed=0
-    if $(which minisat > /dev/null); then
+    if $(which minisat >/dev/null 2>/dev/null); then
         solveStrategy=minisatSolveStrategy
-    elif $(which minisat > /dev/null); then
+    elif $(which picosat >/dev/null 2>/dev/null); then
         solveStrategy=picosatSolveStrategy
     else
         withFail Please install minisat or picosat
