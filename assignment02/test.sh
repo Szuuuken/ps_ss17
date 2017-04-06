@@ -80,12 +80,6 @@ notSolidTest() {
     doTest <(echo -e "$1 0\n-$2 0") $1 $2 SATISFIABLE "not solid"
 }
 
-#DEPENDENCIES
-declare -a deps=("minisat")
-for i in "${deps[@]}"; do
-    which $i > /dev/null || (echo Please install $i for me to work; exit 1);
-done
-
 if ! [ -f "$FILE" ]; then
     withFail "ERROR: $FILE does not exist! Exiting..."
     exit 1
