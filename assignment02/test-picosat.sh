@@ -10,25 +10,9 @@ if [ -z "${VERBOSE+x}" ]; then
 fi
 
 #SCRIPT
-minisatSolveStrategy() {
-    got="$(minisat "$tmp2" 2>"$tmp" | tail -n1)"
-}
-picosatSolveStrategy() {
-    got="$(picosat "$tmp2" 2>"$tmp" | head -n1 | sed 's/s \(.*\)/\1/g')"
-}
-
-init() {
-    tmp="$(mktemp)"
-    tmp2="$(mktemp)"
-    failed=0
-    if $(which minisat > /dev/null); then
-        solveStrategy=minisatSolveStrategy
-    elif $(which minisat > /dev/null); then
-        solveStrategy=picosatSolveStrategy
-    else
-        withFail Please install minisat or picosat
-    fi
-}
+tmp="$(mktemp)"
+tmp2="$(mktemp)"
+failed=0
 
 fixFile() {
     # Clobbers both tmp files and leaves the result in tmp2
@@ -54,9 +38,9 @@ withFail() {
 
 doTest() {
     cat "${FILE}" $1 | grep '^[0-9-]' | fixFile
-    ${solveStrategy}
+    got="$(picosat "$tmp2" 2>"$tmp" | head -n1)"
     if [ "$(wc -l < "$tmp")" -gt 0 ]; then
-        withFail "There were errors while executing minisat on $tmp2:"
+        withFail "There were errors while executing picosat on $tmp2:"
         cat $tmp
         exit 1
     fi
@@ -73,15 +57,15 @@ doTest() {
 }
 
 solidTest() {
-    doTest <(echo -e "$1 0\n$2 0") $1 $2 SATISFIABLE solid
+    doTest <(echo -e "$1 0\n$2 0") $1 $2 "s SATISFIABLE" solid
 }
 
 notSolidTest() {
-    doTest <(echo -e "$1 0\n-$2 0") $1 $2 SATISFIABLE "not solid"
+    doTest <(echo -e "$1 0\n-$2 0") $1 $2 "s SATISFIABLE" "not solid"
 }
 
 #DEPENDENCIES
-declare -a deps=("minisat")
+declare -a deps=("picosat")
 for i in "${deps[@]}"; do
     which $i > /dev/null || (echo Please install $i for me to work; exit 1);
 done
@@ -91,7 +75,6 @@ if ! [ -f "$FILE" ]; then
     exit 1
 fi
 
-init
 cleanup
 
 solidTest 1 4
@@ -333,8 +316,8 @@ notSolidTest 16 13
 notSolidTest 16 14
 notSolidTest 16 15
 
-doTest <(echo -e "1 0\n2 0") 1 2 SATISFIABLE custom1
-doTest <(echo -e "1 0\n3 0") 1 3 UNSATISFIABLE custom2
+doTest <(echo -e "1 0\n2 0") 1 2 "s SATISFIABLE" custom1
+doTest <(echo -e "1 0\n3 0") 1 3 "s UNSATISFIABLE" custom2
 
 if [ "$failed" == 0 ]; then
     [ "$VERBOSE" == true ] && echo
